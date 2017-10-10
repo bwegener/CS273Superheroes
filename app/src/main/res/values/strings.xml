@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">CS 273 Superheroes</string>
+    <string name="image_description">Image of the current superhero in the quiz</string>
+
 </resources>
