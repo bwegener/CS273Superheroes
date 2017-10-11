@@ -10,6 +10,7 @@ public class Superhero {
     private String mName;
     private String mPower;
     private String mThing;
+    private String mFileName;
 
     public Superhero(String userName, String name, String power, String thing)
     {
@@ -20,6 +21,7 @@ public class Superhero {
         name = name.replaceAll(" ", "_");
         power = power.replaceAll(" ", "_");
         thing = thing.replaceAll(" ", "_");
+        mFileName = userName + ".png";
     }
 
     public String getUserName() {
@@ -34,10 +36,11 @@ public class Superhero {
         return mPower;
     }
 
-
     public String getThing() {
         return mThing;
     }
+
+    public String getFileName() { return mFileName; }
 
     public boolean equals(Object o)
     {
@@ -51,7 +54,7 @@ public class Superhero {
         if (!mThing.equals(superhero.mThing)) return false;
 
         // IS THIS RIGHT?
-        return true;
+        return mFileName.equals(superhero.mFileName);
     }
 
     @Override
@@ -60,6 +63,7 @@ public class Superhero {
         result = 31 * result + (mName != null ? mName.hashCode() : 0);
         result = 31 * result + (mPower != null ? mPower.hashCode() : 0);
         result = 31 * result + (mThing != null ? mThing.hashCode() : 0);
+        result = 31 * result + (mFileName != null ? mFileName.hashCode() : 0);
         return result;
     }
 
