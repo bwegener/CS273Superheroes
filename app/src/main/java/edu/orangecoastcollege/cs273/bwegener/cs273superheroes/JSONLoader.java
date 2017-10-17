@@ -13,7 +13,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Brandy on 10/9/17.
+ * This is the <code>JSONLoader</code> it loads the .json file and gets all of the superhero
+ * info stored there
+ *
+ * @author Brian Wegener
+ * @version 1.0
+ *
+ * Created by bwegener on 10/9/17.
  */
 
 public class JSONLoader {

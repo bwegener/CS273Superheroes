@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string-array name="choices_list">
-        <item>Name</item>
-        <item>Power</item>
-        <item>Thing</item>
+    <string-array name="quiz_types_list">
+        <item>@string/name_type</item>
+        <item>@string/power_type</item>
+        <item>@string/one_thing_type</item>
     </string-array>
 
     <string-array name="guesses_list">

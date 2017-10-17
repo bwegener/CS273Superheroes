@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.v4.content.ContextCompat;
 import android.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -28,6 +29,16 @@ import java.util.List;
 
 import static edu.orangecoastcollege.cs273.bwegener.cs273superheroes.R.xml.preferences;
 
+/**
+ * This <code>QuizActivity</code> is where all the activities associated to the quiz
+ * take place. The user gets to see a picture of a "Superhero" and then based on which
+ * quiz they are taking answer the question.
+ *
+ * @author Brian Wegener
+ * @version 1.0
+ *
+ * Created by bwegener on 10/9/2017
+ */
 public class QuizActivity extends AppCompatActivity {
 
     private static final String TAG = "Superhero Quiz";
@@ -37,8 +48,12 @@ public class QuizActivity extends AppCompatActivity {
     private Button[] mButtons = new Button[8];
     private List<Superhero> mAllSuperheroesList;
     private List<Superhero> mQuizSuperheroesList;
-    private List<Superhero> mFilteredSuperheroesList;
+    private List<String> mAllSuperheroNamesList;
+    private List<String> mAllSuperheroPowersList;
+    private List<String> mAllSuperheroThingsList;
+    private List<String> mAllSuperheroTypeList;
     private Superhero mCorrectSuperhero;
+    private String mCorrectAnswer;
     private int mTotalGuesses;
     private int mCorrectGuesses;
     private SecureRandom rng;
@@ -51,12 +66,18 @@ public class QuizActivity extends AppCompatActivity {
     private TextView mGuessTextView;
 
     private int mChoices; // stores how many buttons are selected
-    private String mSuperhero; // Stores what superhero choice is selected (name, power, thing)
+    private String mQuizType; // Stores what superhero choice is selected (name, power, thing)
 
     // Keys used in preferences.xml
     private static final String CHOICES = "pref_numberOfChoices";
     private static final String SUPERHEROES = "pref_powers";
 
+    /**
+     * This is what happens when the app is first loaded.
+     * It instantiates all of the views, loads the JSON,
+     * and makes sure that everything is good to go.
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -95,11 +116,24 @@ public class QuizActivity extends AppCompatActivity {
             Log.e("Superheroes Quiz", "Error loading from JSON", e);
         }
 
-        mSuperhero = preferences.getString(SUPERHEROES, "Name");
+        mAllSuperheroNamesList = new ArrayList<>();
+        mAllSuperheroPowersList = new ArrayList<>();
+        mAllSuperheroThingsList = new ArrayList<>();
+
+        for(Superhero s : mAllSuperheroesList)
+        {
+            mAllSuperheroNamesList.add(s.getName());
+            mAllSuperheroPowersList.add(s.getPower());
+            mAllSuperheroThingsList.add(s.getThing());
+        }
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        preferences.registerOnSharedPreferenceChangeListener(mPreferenceChangeListener);
+
+        mQuizType = preferences.getString(getString(R.string.pref_key), getString(R.string.pref_default));
         mChoices = Integer.parseInt(preferences.getString(CHOICES, "4"));
 
         updateChoices();
-        updateSuperhero();
         resetQuiz();
     }
 
@@ -108,6 +142,8 @@ public class QuizActivity extends AppCompatActivity {
         mCorrectGuesses = 0;
         mTotalGuesses = 0;
         mQuizSuperheroesList.clear();
+
+        mGuessTextView.setText(getString(R.string.guess, mQuizType));
 
         while (mQuizSuperheroesList.size() < SUPERHEROES_IN_QUIZ) {
             int randomPosition = rng.nextInt(mAllSuperheroesList.size());
@@ -130,10 +166,26 @@ public class QuizActivity extends AppCompatActivity {
 
         try {
             InputStream stream = getAssets().open(mCorrectSuperhero.getFileName());
-            Drawable image = Drawable.createFromStream(stream, mCorrectSuperhero.getName());
+            Drawable image = Drawable.createFromStream(stream, mCorrectSuperhero.getUserName());
             mSuperheroImageView.setImageDrawable(image);
         } catch (IOException e) {
             Log.e(TAG, "Error loading image" + mCorrectSuperhero.getFileName(), e);
+        }
+
+        if(mQuizType.equals(getString(R.string.name_type)))
+        {
+            mAllSuperheroTypeList = new ArrayList<>(mAllSuperheroNamesList);
+            mCorrectAnswer = mCorrectSuperhero.getName();
+        }
+        else if(mQuizType.equals(getString(R.string.power_type)))
+        {
+            mAllSuperheroTypeList = new ArrayList<>(mAllSuperheroPowersList);
+            mCorrectAnswer = mCorrectSuperhero.getPower();
+        }
+        else if(mQuizType.equals(getString(R.string.one_thing_type)))
+        {
+            mAllSuperheroTypeList = new ArrayList<>(mAllSuperheroThingsList);
+            mCorrectAnswer = mCorrectSuperhero.getThing();
         }
 
         do {
@@ -150,6 +202,10 @@ public class QuizActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * This is the view that happens when the user makes a guess.
+     * @param v
+     */
     public void makeGuess(View v) {
 
         Button clickedButton = (Button) v;
@@ -175,7 +231,7 @@ public class QuizActivity extends AppCompatActivity {
                 }, 2000);
             } else {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setMessage(getString(R.string.results, mTotalGuesses, (double) mCorrectGuesses / mTotalGuesses * 100));
+                builder.setMessage(getString(R.string.results, mTotalGuesses, (double) 100.0 * mCorrectGuesses / mTotalGuesses));
                 builder.setPositiveButton(getString(R.string.reset_quiz), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int which) {
@@ -195,7 +251,11 @@ public class QuizActivity extends AppCompatActivity {
 
     }
 
-
+    /**
+     * This is what happens to create the options menu.
+     * @param menu
+     * @return
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -204,6 +264,11 @@ public class QuizActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    /**
+     * This is what item is selected in the options menu
+      * @param item
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -213,7 +278,10 @@ public class QuizActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    SharedPreferences.OnSharedPreferenceChangeListener mPreferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+    private SharedPreferences.OnSharedPreferenceChangeListener mPreferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+        /**
+         * This is where the sharedPreferences are changed.
+         */
         @Override
         public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
             switch (key) {
@@ -223,8 +291,7 @@ public class QuizActivity extends AppCompatActivity {
                     resetQuiz();
                     break;
                 case SUPERHEROES:
-                    mSuperhero = sharedPreferences.getString(SUPERHEROES, "Name");
-                    updateSuperhero();
+                    mQuizType = sharedPreferences.getString(SUPERHEROES, "Name");
                     resetQuiz();
                     break;
             }
@@ -241,19 +308,6 @@ public class QuizActivity extends AppCompatActivity {
             } else {
                 mLayouts[i].setEnabled(false);
                 mLayouts[i].setVisibility(View.GONE);
-            }
-        }
-    }
-
-    private void updateSuperhero() {
-        if (mSuperhero.equals("Name"))
-            mFilteredSuperheroesList = new ArrayList<>(mAllSuperheroesList);
-        else {
-            mFilteredSuperheroesList = new ArrayList<>();
-
-            for (Superhero s : mAllSuperheroesList) {
-                if (s.getName().equals(mSuperhero))
-                    mFilteredSuperheroesList.add(s);
             }
         }
     }

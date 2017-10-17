@@ -12,12 +12,13 @@
         />
 
     <ListPreference
-        android:entries="@array/choices_list"
-        android:entryValues="@array/choices_list"
+        android:entries="@array/quiz_types_list"
+        android:entryValues="@array/quiz_types_list"
         android:key="pref_powers"
-        android:title="@string/superhero_names"
-        android:summary="@string/superhero_names_description"
+        android:title="@string/quiz_types"
+        android:summary="@string/quiz_types_descriptions"
         android:persistent="true"
+        android:defaultValue="@string/pref_default"
         />
 
 
