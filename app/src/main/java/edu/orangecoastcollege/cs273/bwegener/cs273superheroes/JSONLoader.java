@@ -20,15 +20,12 @@ public class JSONLoader {
 
     /**
      * Loads JSON data from a file in the assets directory.
-     *
-     *
      */
-    public static List<Superhero> loadJSONFromAsset(Context context) throws IOException{
+    public static List<Superhero> loadJSONFromAsset(Context context) throws IOException {
+
         List<Superhero> allSuperheroesList = new ArrayList<>();
 
-        String json = null;
-
-        InputStream is = context.getAssets().open("Superheroes.json");
+        InputStream is = context.getAssets().open("cs273superheroes.json");
 
         int size = is.available();
 
@@ -36,30 +33,30 @@ public class JSONLoader {
 
         is.read(buffer);
         is.close();
-        json = new String(buffer, "UTF-8");
+
+        String json = new String(buffer, "UTF-8");
 
         try {
             JSONObject jsonRootObject = new JSONObject(json);
-            JSONArray allSuperheroesJSON = jsonRootObject.getJSONArray("Superheroes");
+            JSONArray allSuperheroesJSON = jsonRootObject.getJSONArray("CS273Superheroes");
 
             int length = allSuperheroesJSON.length();
-            for(int i = 0; i < length; ++i)
-            {
-                JSONObject superheroObject = allSuperheroesJSON.getJSONObject(i);
 
-                String userName = superheroObject.getString("Username");
-                String name = superheroObject.getString("Name");
-                String power = superheroObject.getString("Superpower");
-                String thing = superheroObject.getString("OneThing");
+            for (int i = 0; i < length; i++) {
+
+                JSONObject superHeroJSON = allSuperheroesJSON.getJSONObject(i);
+
+                String userName = superHeroJSON.getString("Username");
+                String name = superHeroJSON.getString("Name");
+                String power = superHeroJSON.getString("Superpower");
+                String thing = superHeroJSON.getString("OneThing");
 
                 Superhero superhero = new Superhero(userName, name, power, thing);
 
                 allSuperheroesList.add(superhero);
             }
-        }
-        catch(JSONException e)
-        {
-            Log.e("Supeheroes", e.getMessage());
+        } catch (JSONException e) {
+            Log.e("CS 273 Superheroes", e.getMessage());
         }
 
         return allSuperheroesList;
