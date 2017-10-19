@@ -7,10 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
+    android:padding="@dimen/layout_padding"
     tools:context="edu.orangecoastcollege.cs273.bwegener.cs273superheroes.SettingsActivity">
 
     <TextView
@@ -107,7 +104,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|center_horizontal"
         android:gravity="center_horizontal"
-        android:text="Medium Text"
+        android:text="Answer"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textSize="@dimen/answer_size"
         android:textStyle="bold"/>

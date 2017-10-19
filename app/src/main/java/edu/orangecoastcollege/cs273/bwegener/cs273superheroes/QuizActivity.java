@@ -185,7 +185,7 @@ public class QuizActivity extends AppCompatActivity {
         do {
             Collections.shuffle(mAllSuperheroTypeList);
         }
-        while (mAllSuperheroesList.subList(0, mButtons.length).contains(mCorrectAnswer));
+        while (mAllSuperheroTypeList.subList(0, mButtons.length).contains(mCorrectAnswer));
 
         for (int i = 0; i < mButtons.length; i++) {
             mButtons[i].setEnabled(true);

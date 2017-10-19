@@ -4,13 +4,11 @@
     <ListPreference
         android:entries="@array/quiz_types_list"
         android:entryValues="@array/quiz_types_list"
-        android:key="pref_powers"
+        android:key="@string/pref_key"
         android:title="@string/quiz_types"
         android:summary="@string/quiz_types_descriptions"
         android:persistent="true"
         android:defaultValue="@string/pref_default"
         />
-
-
 
 </PreferenceScreen>
